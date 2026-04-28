@@ -1,0 +1,523 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TikTok Rating - Saque</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #0a0a0a 0%, #1a1a2e 100%);
+            min-height: 100vh;
+            color: white;
+            overflow-x: hidden;
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 16px 20px;
+            background: rgba(0,0,0,0.5);
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 100;
+        }
+
+        .super-vip {
+            color: #ff2d55;
+            font-weight: bold;
+            font-size: 14px;
+        }
+
+        .balance {
+            background: linear-gradient(135deg, #1a1a2e 0%, #2d2d44 100%);
+            border: 1px solid #00f5d4;
+            border-radius: 20px;
+            padding: 8px 16px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { box-shadow: 0 0 0 0 rgba(0, 245, 212, 0.4); }
+            50% { box-shadow: 0 0 20px 5px rgba(0, 245, 212, 0.2); }
+        }
+
+        .balance-icon {
+            width: 20px;
+            height: 20px;
+            background: #00f5d4;
+            border-radius: 4px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+        }
+
+        .balance-amount {
+            color: #00f5d4;
+            font-weight: bold;
+            font-size: 18px;
+        }
+
+        .main-content {
+            padding-top: 80px;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .success-card {
+            background: linear-gradient(135deg, #1a2a2a 0%, #0d1a1a 100%);
+            border: 2px solid #00f5d4;
+            border-radius: 20px;
+            padding: 30px;
+            width: 100%;
+            max-width: 400px;
+            text-align: center;
+            margin-bottom: 30px;
+            animation: slideIn 0.5s ease;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .success-icon {
+            font-size: 60px;
+            margin-bottom: 20px;
+        }
+
+        .success-title {
+            font-size: 28px;
+            font-weight: bold;
+            margin-bottom: 10px;
+            background: linear-gradient(135deg, #00f5d4 0%, #00d4aa 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .success-subtitle {
+            font-size: 16px;
+            color: #888;
+            margin-bottom: 20px;
+        }
+
+        .final-balance {
+            font-size: 48px;
+            font-weight: bold;
+            background: linear-gradient(135deg, #00f5d4 0%, #ff2d55 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 10px;
+        }
+
+        .multiplier-badge {
+            display: inline-block;
+            background: linear-gradient(135deg, #ff2d55 0%, #ff6b8a 100%);
+            color: white;
+            padding: 8px 20px;
+            border-radius: 20px;
+            font-weight: bold;
+            font-size: 14px;
+        }
+
+        .video-section {
+            width: 100%;
+            max-width: 400px;
+            margin-bottom: 30px;
+        }
+
+        .video-title {
+            text-align: center;
+            font-size: 18px;
+            margin-bottom: 16px;
+            color: #ccc;
+        }
+
+        .video-container {
+            width: 100%;
+            aspect-ratio: 16/9;
+            background: linear-gradient(135deg, #1a1a2e 0%, #2d2d44 100%);
+            border-radius: 16px;
+            overflow: hidden;
+            position: relative;
+            border: 1px solid #3a3a5a;
+        }
+
+        .video-placeholder {
+            width: 100%;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(135deg, #0a0a1a 0%, #1a1a2e 100%);
+        }
+
+        .play-button {
+            width: 80px;
+            height: 80px;
+            background: linear-gradient(135deg, #ff2d55 0%, #ff6b8a 100%);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 32px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-bottom: 16px;
+        }
+
+        .play-button:hover {
+            transform: scale(1.1);
+            box-shadow: 0 0 30px rgba(255, 45, 85, 0.5);
+        }
+
+        .video-placeholder p {
+            color: #888;
+            font-size: 14px;
+        }
+
+        .withdraw-section {
+            width: 100%;
+            max-width: 400px;
+            text-align: center;
+        }
+
+        .withdraw-info {
+            background: linear-gradient(135deg, #1a1a2e 0%, #2d2d44 100%);
+            border: 1px solid #3a3a5a;
+            border-radius: 12px;
+            padding: 16px;
+            margin-bottom: 20px;
+        }
+
+        .withdraw-info p {
+            font-size: 14px;
+            color: #888;
+            margin-bottom: 8px;
+        }
+
+        .withdraw-info .amount {
+            font-size: 24px;
+            font-weight: bold;
+            color: #00f5d4;
+        }
+
+        .withdraw-btn {
+            width: 100%;
+            background: linear-gradient(135deg, #00f5d4 0%, #00d4aa 100%);
+            color: #000;
+            border: none;
+            border-radius: 30px;
+            padding: 18px 40px;
+            font-size: 20px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .withdraw-btn:hover {
+            transform: scale(1.02);
+            box-shadow: 0 0 30px rgba(0, 245, 212, 0.5);
+        }
+
+        .trust-badges {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            margin-top: 20px;
+        }
+
+        .trust-badge {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 12px;
+            color: #888;
+        }
+
+        .trust-badge span {
+            font-size: 16px;
+        }
+
+        /* Confetti Canvas */
+        #confetti-canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 400;
+        }
+
+        .testimonials {
+            width: 100%;
+            max-width: 400px;
+            margin-top: 30px;
+        }
+
+        .testimonial-title {
+            text-align: center;
+            font-size: 16px;
+            color: #888;
+            margin-bottom: 16px;
+        }
+
+        .testimonial-card {
+            background: linear-gradient(135deg, #1a1a2e 0%, #2d2d44 100%);
+            border: 1px solid #3a3a5a;
+            border-radius: 12px;
+            padding: 16px;
+            margin-bottom: 12px;
+            display: flex;
+            gap: 12px;
+        }
+
+        .testimonial-avatar {
+            width: 40px;
+            height: 40px;
+            background: linear-gradient(135deg, #ff2d55 0%, #00f5d4 100%);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+            flex-shrink: 0;
+        }
+
+        .testimonial-content {
+            flex: 1;
+        }
+
+        .testimonial-name {
+            font-weight: bold;
+            font-size: 14px;
+            margin-bottom: 4px;
+        }
+
+        .testimonial-text {
+            font-size: 13px;
+            color: #aaa;
+            line-height: 1.4;
+        }
+
+        .testimonial-amount {
+            color: #00f5d4;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <span class="super-vip">SUPER VIP</span>
+        <div class="balance">
+            <div class="balance-icon">💰</div>
+            <span class="balance-amount" id="balance">$0.00</span>
+        </div>
+    </header>
+
+    <main class="main-content">
+        <div class="success-card">
+            <div class="success-icon">🎉</div>
+            <h1 class="success-title">Parabéns!</h1>
+            <p class="success-subtitle">Seu saldo foi multiplicado por 3x!</p>
+            <div class="final-balance" id="final-balance">$127.50</div>
+            <span class="multiplier-badge">3X MULTIPLIER APPLIED</span>
+        </div>
+
+        <div class="video-section">
+            <h2 class="video-title">Assista para liberar o saque</h2>
+            <div class="video-container">
+                <div class="video-placeholder">
+                    <div class="play-button" id="play-btn">▶</div>
+                    <p>Clique para assistir</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="withdraw-section">
+            <div class="withdraw-info">
+                <p>Valor disponível para saque:</p>
+                <div class="amount" id="withdraw-amount">$127.50</div>
+            </div>
+            <button class="withdraw-btn" id="withdraw-btn">SACAR AGORA 💸</button>
+            <div class="trust-badges">
+                <div class="trust-badge"><span>🔒</span> Pagamento Seguro</div>
+                <div class="trust-badge"><span>⚡</span> Saque Instantâneo</div>
+                <div class="trust-badge"><span>✓</span> Verificado</div>
+            </div>
+        </div>
+
+        <div class="testimonials">
+            <h3 class="testimonial-title">Pessoas que sacaram recentemente:</h3>
+            <div class="testimonial-card">
+                <div class="testimonial-avatar">👤</div>
+                <div class="testimonial-content">
+                    <div class="testimonial-name">Carlos M.</div>
+                    <div class="testimonial-text">Sacou <span class="testimonial-amount">$285.00</span> há 2 minutos</div>
+                </div>
+            </div>
+            <div class="testimonial-card">
+                <div class="testimonial-avatar">👤</div>
+                <div class="testimonial-content">
+                    <div class="testimonial-name">Ana P.</div>
+                    <div class="testimonial-text">Sacou <span class="testimonial-amount">$142.50</span> há 5 minutos</div>
+                </div>
+            </div>
+            <div class="testimonial-card">
+                <div class="testimonial-avatar">👤</div>
+                <div class="testimonial-content">
+                    <div class="testimonial-name">Roberto S.</div>
+                    <div class="testimonial-text">Sacou <span class="testimonial-amount">$320.00</span> há 8 minutos</div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Confetti Canvas -->
+    <canvas id="confetti-canvas"></canvas>
+
+    <script>
+        // Get balance from localStorage
+        let balance = parseFloat(localStorage.getItem('tiktok-balance')) || 127.50;
+        
+        document.getElementById('balance').textContent = `$${balance.toFixed(2)}`;
+        document.getElementById('final-balance').textContent = `$${balance.toFixed(2)}`;
+        document.getElementById('withdraw-amount').textContent = `$${balance.toFixed(2)}`;
+
+        // Audio Context
+        const AudioContext = window.AudioContext || window.webkitAudioContext;
+        let audioCtx = null;
+
+        function initAudio() {
+            if (!audioCtx) {
+                audioCtx = new AudioContext();
+            }
+        }
+
+        function playCelebrationSound() {
+            initAudio();
+            const notes = [523.25, 659.25, 783.99, 1046.50, 1318.51];
+            notes.forEach((freq, i) => {
+                const oscillator = audioCtx.createOscillator();
+                const gainNode = audioCtx.createGain();
+                oscillator.connect(gainNode);
+                gainNode.connect(audioCtx.destination);
+                oscillator.frequency.value = freq;
+                oscillator.type = 'sine';
+                gainNode.gain.setValueAtTime(0.12, audioCtx.currentTime + i * 0.1);
+                gainNode.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + i * 0.1 + 0.4);
+                oscillator.start(audioCtx.currentTime + i * 0.1);
+                oscillator.stop(audioCtx.currentTime + i * 0.1 + 0.4);
+            });
+        }
+
+        // Confetti
+        const canvas = document.getElementById('confetti-canvas');
+        const ctx = canvas.getContext('2d');
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+
+        let confettiPieces = [];
+
+        function createConfetti() {
+            confettiPieces = [];
+            const colors = ['#ff2d55', '#00f5d4', '#ffcc00', '#ff6b8a', '#00d4aa', '#ff9500'];
+            for (let i = 0; i < 150; i++) {
+                confettiPieces.push({
+                    x: Math.random() * canvas.width,
+                    y: Math.random() * canvas.height - canvas.height,
+                    w: Math.random() * 10 + 5,
+                    h: Math.random() * 6 + 3,
+                    color: colors[Math.floor(Math.random() * colors.length)],
+                    velocity: Math.random() * 3 + 2,
+                    angle: Math.random() * Math.PI * 2,
+                    spin: Math.random() * 0.2 - 0.1
+                });
+            }
+        }
+
+        function animateConfetti() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            let activeConfetti = false;
+            
+            confettiPieces.forEach(piece => {
+                if (piece.y < canvas.height) {
+                    activeConfetti = true;
+                    piece.y += piece.velocity;
+                    piece.angle += piece.spin;
+                    
+                    ctx.save();
+                    ctx.translate(piece.x, piece.y);
+                    ctx.rotate(piece.angle);
+                    ctx.fillStyle = piece.color;
+                    ctx.fillRect(-piece.w / 2, -piece.h / 2, piece.w, piece.h);
+                    ctx.restore();
+                }
+            });
+
+            if (activeConfetti) {
+                requestAnimationFrame(animateConfetti);
+            }
+        }
+
+        function triggerConfetti() {
+            createConfetti();
+            animateConfetti();
+            playCelebrationSound();
+        }
+
+        // Initial confetti on page load
+        setTimeout(() => {
+            triggerConfetti();
+        }, 500);
+
+        // Event Listeners
+        document.getElementById('play-btn').addEventListener('click', function() {
+            this.innerHTML = '⏸';
+            // Here you would embed the actual VSL video
+            alert('Aqui seria reproduzido o VSL (Video Sales Letter)');
+        });
+
+        document.getElementById('withdraw-btn').addEventListener('click', function() {
+            triggerConfetti();
+            alert('Redirecionando para a página de saque...');
+            // Here you would redirect to the actual withdrawal page
+        });
+
+        document.body.addEventListener('click', initAudio, { once: true });
+
+        window.addEventListener('resize', () => {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        });
+    </script>
+</body>
+</html>
