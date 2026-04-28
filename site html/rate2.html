@@ -1,0 +1,593 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>TikTok Rating - Avaliar Video 2</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            min-height: 100vh;
+            color: white;
+            overflow-x: hidden;
+        }
+        
+        .container {
+            max-width: 430px;
+            margin: 0 auto;
+            padding: 20px;
+            min-height: 100vh;
+        }
+        
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        
+        .super-vip {
+            color: #ff2d55;
+            font-weight: bold;
+            font-size: 14px;
+            letter-spacing: 1px;
+        }
+        
+        .balance-box {
+            background: rgba(0, 0, 0, 0.3);
+            border: 1px solid #ff2d55;
+            border-radius: 20px;
+            padding: 8px 16px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .balance-amount {
+            color: #00f5d4;
+            font-weight: bold;
+            font-size: 16px;
+        }
+        
+        .timer-section {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        
+        .timer-label {
+            color: #888;
+            font-size: 12px;
+            margin-bottom: 5px;
+        }
+        
+        .timer {
+            font-size: 32px;
+            font-weight: bold;
+            color: #ff2d55;
+        }
+        
+        .progress-section {
+            margin-bottom: 20px;
+        }
+        
+        .progress-text {
+            display: flex;
+            justify-content: space-between;
+            font-size: 12px;
+            color: #888;
+            margin-bottom: 8px;
+        }
+        
+        .progress-bar {
+            height: 6px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 3px;
+            overflow: hidden;
+        }
+        
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #ff2d55, #00f5d4);
+            border-radius: 3px;
+            width: 50%;
+        }
+        
+        .video-section {
+            position: relative;
+            border-radius: 16px;
+            overflow: hidden;
+            margin-bottom: 20px;
+            aspect-ratio: 9/14;
+            max-height: 350px;
+            background: #000;
+        }
+        
+        .video-placeholder {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        
+        .rating-title {
+            text-align: center;
+            font-size: 16px;
+            margin-bottom: 15px;
+            color: #ccc;
+        }
+        
+        .rating-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+        
+        .rating-btn {
+            background: rgba(30, 30, 50, 0.8);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 16px;
+            padding: 16px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-align: left;
+        }
+        
+        .rating-btn:hover {
+            transform: scale(1.02);
+            border-color: rgba(255, 255, 255, 0.3);
+        }
+        
+        .rating-btn.viral {
+            background: linear-gradient(135deg, rgba(138, 43, 226, 0.3), rgba(75, 0, 130, 0.3));
+            border-color: rgba(138, 43, 226, 0.5);
+        }
+        
+        .rating-btn.top {
+            background: linear-gradient(135deg, rgba(255, 100, 0, 0.3), rgba(255, 50, 0, 0.3));
+            border-color: rgba(255, 100, 0, 0.5);
+        }
+        
+        .rating-btn.notbad {
+            background: linear-gradient(135deg, rgba(50, 50, 70, 0.8), rgba(40, 40, 60, 0.8));
+        }
+        
+        .rating-btn.meh {
+            background: linear-gradient(135deg, rgba(60, 50, 40, 0.8), rgba(50, 40, 30, 0.8));
+        }
+        
+        .rating-btn.danger {
+            background: linear-gradient(135deg, rgba(100, 80, 0, 0.3), rgba(80, 60, 0, 0.3));
+            border-color: rgba(255, 200, 0, 0.5);
+        }
+        
+        .rating-btn.flop {
+            background: linear-gradient(135deg, rgba(100, 30, 30, 0.3), rgba(80, 20, 20, 0.3));
+            border-color: rgba(255, 60, 60, 0.5);
+        }
+        
+        .rating-header {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 6px;
+        }
+        
+        .rating-icon {
+            font-size: 20px;
+        }
+        
+        .rating-name {
+            font-weight: bold;
+            font-size: 14px;
+            color: white;
+        }
+        
+        .rating-desc {
+            font-size: 12px;
+            color: #888;
+            font-style: italic;
+        }
+        
+        .user-notification {
+            position: fixed;
+            bottom: 100px;
+            left: 20px;
+            background: rgba(30, 30, 50, 0.95);
+            border-radius: 12px;
+            padding: 12px 16px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            transform: translateX(-150%);
+            transition: transform 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+            z-index: 1000;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+        }
+        
+        .user-notification.show {
+            transform: translateX(0);
+        }
+        
+        .notification-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #00f5d4, #00d4aa);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+        }
+        
+        .notification-content {
+            flex: 1;
+        }
+        
+        .notification-name {
+            font-weight: bold;
+            font-size: 14px;
+        }
+        
+        .notification-location {
+            font-size: 11px;
+            color: #888;
+        }
+        
+        .notification-amount {
+            color: #00f5d4;
+            font-weight: bold;
+            font-size: 16px;
+            background: rgba(0, 245, 212, 0.1);
+            padding: 4px 10px;
+            border-radius: 8px;
+        }
+        
+        .reward-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.9);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 2000;
+        }
+        
+        .reward-modal.show {
+            display: flex;
+        }
+        
+        .reward-content {
+            background: linear-gradient(135deg, #1a1a2e, #2d1f3d);
+            border: 2px solid #ff2d55;
+            border-radius: 24px;
+            padding: 40px 30px;
+            text-align: center;
+            max-width: 320px;
+        }
+        
+        .reward-icon {
+            width: 80px;
+            height: 80px;
+            background: radial-gradient(circle, #ff2d55, #8b0000);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 20px;
+            font-size: 40px;
+        }
+        
+        .reward-title {
+            font-size: 24px;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+        
+        .reward-subtitle {
+            color: #888;
+            font-size: 14px;
+            margin-bottom: 10px;
+        }
+        
+        .reward-amount {
+            font-size: 48px;
+            font-weight: bold;
+            background: linear-gradient(90deg, #ff2d55, #00f5d4);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 10px;
+        }
+        
+        .reward-desc {
+            color: #888;
+            font-size: 12px;
+            margin-bottom: 20px;
+        }
+        
+        .reward-continue {
+            color: #ccc;
+            font-size: 14px;
+        }
+        
+        #confettiCanvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 3000;
+        }
+    </style>
+</head>
+<body>
+    <canvas id="confettiCanvas"></canvas>
+    
+    <div class="container">
+        <div class="header">
+            <span class="super-vip">SUPER VIP</span>
+            <div class="balance-box">
+                <span>&#128176;</span>
+                <span class="balance-amount" id="balanceDisplay">$0.00</span>
+            </div>
+        </div>
+        
+        <div class="timer-section">
+            <div class="timer-label">Tempo restante</div>
+            <div class="timer" id="mainTimer">05:00</div>
+        </div>
+        
+        <div class="progress-section">
+            <div class="progress-text">
+                <span>Progresso</span>
+                <span>1/2 videos</span>
+            </div>
+            <div class="progress-bar">
+                <div class="progress-fill" style="width: 50%"></div>
+            </div>
+        </div>
+        
+        <div class="video-section">
+            <img class="video-placeholder" src="https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=400&h=600&fit=crop" alt="Food video 2">
+        </div>
+        
+        <div class="rating-title">Escolha sua avaliacao:</div>
+        
+        <div class="rating-grid">
+            <button class="rating-btn viral" onclick="submitRating('VIRAL')">
+                <div class="rating-header">
+                    <span class="rating-icon">&#128640;</span>
+                    <span class="rating-name">VIRAL</span>
+                </div>
+                <div class="rating-desc">"It's going to blow up!"</div>
+            </button>
+            
+            <button class="rating-btn top" onclick="submitRating('TOP')">
+                <div class="rating-header">
+                    <span class="rating-icon">&#128293;</span>
+                    <span class="rating-name">TOP</span>
+                </div>
+                <div class="rating-desc">"Quality content"</div>
+            </button>
+            
+            <button class="rating-btn notbad" onclick="submitRating('NOT BAD')">
+                <div class="rating-header">
+                    <span class="rating-icon">&#128064;</span>
+                    <span class="rating-name">NOT BAD</span>
+                </div>
+                <div class="rating-desc">"It has potential"</div>
+            </button>
+            
+            <button class="rating-btn meh" onclick="submitRating('MEH')">
+                <div class="rating-header">
+                    <span class="rating-icon">&#128528;</span>
+                    <span class="rating-name">MEH</span>
+                </div>
+                <div class="rating-desc">"Not convinced..."</div>
+            </button>
+            
+            <button class="rating-btn danger" onclick="submitRating('DANGER')">
+                <div class="rating-header">
+                    <span class="rating-icon">&#9888;&#65039;</span>
+                    <span class="rating-name">DANGER</span>
+                </div>
+                <div class="rating-desc">"This won't end well..."</div>
+            </button>
+            
+            <button class="rating-btn flop" onclick="submitRating('FLOP')">
+                <div class="rating-header">
+                    <span class="rating-icon">&#128165;</span>
+                    <span class="rating-name">FLOP</span>
+                </div>
+                <div class="rating-desc">"Doesn't work at all"</div>
+            </button>
+        </div>
+    </div>
+    
+    <div class="user-notification" id="userNotification">
+        <div class="notification-avatar">&#127917;</div>
+        <div class="notification-content">
+            <div class="notification-name" id="notifName">Maria S.</div>
+            <div class="notification-location" id="notifLocation">Dallas</div>
+        </div>
+        <div class="notification-amount" id="notifAmount">+$18.20</div>
+    </div>
+    
+    <div class="reward-modal" id="rewardModal">
+        <div class="reward-content">
+            <div class="reward-icon">&#128176;</div>
+            <div class="reward-title">&#127881; Well done! Reward unlocked!</div>
+            <div class="reward-subtitle">You earned:</div>
+            <div class="reward-amount" id="rewardAmount">+$14.80</div>
+            <div class="reward-desc">for evaluating this video</div>
+            <div class="reward-continue">Keep evaluating to earn more! &#128640;</div>
+        </div>
+    </div>
+    
+    <script>
+        const AudioContext = window.AudioContext || window.webkitAudioContext;
+        let audioCtx = null;
+        
+        function getAudioContext() {
+            if (!audioCtx) audioCtx = new AudioContext();
+            return audioCtx;
+        }
+        
+        function playNotificationSound() {
+            const ctx = getAudioContext();
+            const osc = ctx.createOscillator();
+            const gain = ctx.createGain();
+            osc.connect(gain);
+            gain.connect(ctx.destination);
+            osc.frequency.setValueAtTime(800, ctx.currentTime);
+            osc.frequency.setValueAtTime(1000, ctx.currentTime + 0.1);
+            osc.type = 'sine';
+            gain.gain.setValueAtTime(0.1, ctx.currentTime);
+            gain.gain.linearRampToValueAtTime(0, ctx.currentTime + 0.3);
+            osc.start(ctx.currentTime);
+            osc.stop(ctx.currentTime + 0.3);
+        }
+        
+        function playCelebrationSound() {
+            const ctx = getAudioContext();
+            const notes = [523.25, 659.25, 783.99, 1046.50];
+            notes.forEach((freq, i) => {
+                const osc = ctx.createOscillator();
+                const gain = ctx.createGain();
+                osc.connect(gain);
+                gain.connect(ctx.destination);
+                osc.frequency.setValueAtTime(freq, ctx.currentTime + i * 0.1);
+                osc.type = 'sine';
+                gain.gain.setValueAtTime(0.15, ctx.currentTime + i * 0.1);
+                gain.gain.linearRampToValueAtTime(0, ctx.currentTime + i * 0.1 + 0.3);
+                osc.start(ctx.currentTime + i * 0.1);
+                osc.stop(ctx.currentTime + i * 0.1 + 0.3);
+            });
+        }
+        
+        const canvas = document.getElementById('confettiCanvas');
+        const ctx = canvas.getContext('2d');
+        let confettiPieces = [];
+        let animationId = null;
+        
+        function resizeCanvas() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        }
+        resizeCanvas();
+        window.addEventListener('resize', resizeCanvas);
+        
+        function createConfetti() {
+            const colors = ['#ff2d55', '#00f5d4', '#ffd700', '#ff6b6b', '#4ecdc4', '#45b7d1'];
+            confettiPieces = [];
+            for (let i = 0; i < 150; i++) {
+                confettiPieces.push({
+                    x: Math.random() * canvas.width,
+                    y: Math.random() * canvas.height - canvas.height,
+                    size: Math.random() * 10 + 5,
+                    color: colors[Math.floor(Math.random() * colors.length)],
+                    speedY: Math.random() * 3 + 2,
+                    speedX: Math.random() * 4 - 2,
+                    rotation: Math.random() * 360,
+                    rotationSpeed: Math.random() * 10 - 5
+                });
+            }
+        }
+        
+        function animateConfetti() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            confettiPieces.forEach((piece, index) => {
+                piece.y += piece.speedY;
+                piece.x += piece.speedX;
+                piece.rotation += piece.rotationSpeed;
+                ctx.save();
+                ctx.translate(piece.x, piece.y);
+                ctx.rotate(piece.rotation * Math.PI / 180);
+                ctx.fillStyle = piece.color;
+                ctx.fillRect(-piece.size / 2, -piece.size / 2, piece.size, piece.size * 0.6);
+                ctx.restore();
+                if (piece.y > canvas.height) confettiPieces.splice(index, 1);
+            });
+            if (confettiPieces.length > 0) animationId = requestAnimationFrame(animateConfetti);
+        }
+        
+        function triggerConfetti() {
+            if (animationId) cancelAnimationFrame(animationId);
+            createConfetti();
+            animateConfetti();
+        }
+        
+        let balance = parseFloat(localStorage.getItem('tiktokBalance')) || 0;
+        let mainTimeLeft = parseInt(localStorage.getItem('tiktokTimer')) || 300;
+        
+        function updateBalance() {
+            document.getElementById('balanceDisplay').textContent = '$' + balance.toFixed(2);
+            localStorage.setItem('tiktokBalance', balance.toString());
+        }
+        
+        function startMainTimer() {
+            setInterval(() => {
+                mainTimeLeft--;
+                localStorage.setItem('tiktokTimer', mainTimeLeft.toString());
+                const min = Math.floor(mainTimeLeft / 60);
+                const sec = mainTimeLeft % 60;
+                document.getElementById('mainTimer').textContent = 
+                    String(min).padStart(2, '0') + ':' + String(sec).padStart(2, '0');
+            }, 1000);
+        }
+        
+        function submitRating(rating) {
+            const reward = (Math.random() * 10 + 10).toFixed(2);
+            balance += parseFloat(reward);
+            updateBalance();
+            
+            document.getElementById('rewardAmount').textContent = '+$' + reward;
+            document.getElementById('rewardModal').classList.add('show');
+            
+            triggerConfetti();
+            playCelebrationSound();
+            
+            setTimeout(() => {
+                window.location.href = 'roulette.html';
+            }, 3000);
+        }
+        
+        const names = [
+            { name: 'Maria S.', location: 'Dallas' },
+            { name: 'Carlos R.', location: 'Austin' },
+            { name: 'Ana P.', location: 'Denver' },
+            { name: 'Jorge M.', location: 'Atlanta' }
+        ];
+        
+        function showRandomNotification() {
+            const user = names[Math.floor(Math.random() * names.length)];
+            const amount = (Math.random() * 20 + 5).toFixed(2);
+            document.getElementById('notifName').textContent = user.name;
+            document.getElementById('notifLocation').textContent = user.location;
+            document.getElementById('notifAmount').textContent = '+$' + amount;
+            const notif = document.getElementById('userNotification');
+            notif.classList.add('show');
+            playNotificationSound();
+            setTimeout(() => notif.classList.remove('show'), 4000);
+        }
+        
+        document.addEventListener('DOMContentLoaded', () => {
+            updateBalance();
+            startMainTimer();
+            setInterval(showRandomNotification, 8000);
+            setTimeout(showRandomNotification, 2000);
+        });
+    </script>
+</body>
+</html>
